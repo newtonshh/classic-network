@@ -7,6 +7,7 @@ from torch.optim import lr_scheduler
 from torchvision import datasets, transforms
 import os
 import time
+import sys
 
 data_transform = transforms.Compose([transforms.ToTensor()])
 
@@ -16,7 +17,11 @@ train_dataloader = torch.utils.data.DataLoader(dataset=train_dataset, batch_size
 test_dataset = datasets.MNIST(root='../data', train=False, transform=data_transform, download=True)
 test_dataloader = torch.utils.data.DataLoader(dataset=test_dataset, batch_size=16, shuffle=True, num_workers=0)
 
-device = 'cpu'
+device = ''
+if sys.platform.startswith('win'):
+    device = 'cuda' if torch.cuda.is_available() else 'cpu'
+elif sys.platform.startswith('darwin'):
+    device = 'mps'
 print(device)
 
 model = LeNet().to(device)
@@ -78,12 +83,12 @@ epoch = 10
 min_acc = 0
 for t in range(epoch):
     # 记录程序开始运行的时间
-    start = time.perf_counter()
+    start = time.time()
     print(f'epoch {t + 1}\n------------')
     train(train_dataloader, model, loss_fn, optimizer)
     a = val(test_dataloader, model, loss_fn)
     # 记录程序结束运行的时间
-    end = time.perf_counter()
+    end = time.time()
     # 计算程序运行时间
     elapsed = end - start
     print(f"程序运行时间为{elapsed}毫秒")
