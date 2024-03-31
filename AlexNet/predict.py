@@ -1,14 +1,13 @@
 import torch
-from model import LeNet
+from model import AlexNet
 import torch.utils.data
 from torch.autograd import Variable
 from torchvision import datasets, transforms
 from torchvision.transforms import ToPILImage
 import sys
 
-# Compose()：将多个transforms的操作整合在一起
 data_transform = transforms.Compose([
-    # ToTensor()：数据转化为Tensor格式
+    transforms.Resize((224, 224)),
     transforms.ToTensor()
 ])
 
@@ -29,7 +28,7 @@ elif sys.platform.startswith('darwin'):
 print(device)
 
 # 模型实例化，将模型转到device
-model = LeNet().to(device)
+model = AlexNet().to(device)
 
 # 加载train.py里训练好的模型
 model.load_state_dict(torch.load("./save_model/best_model.pth"))
